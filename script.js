@@ -222,7 +222,7 @@ function setupEventListeners() {
     changeUsernameBtn.addEventListener('click', changeUsername);
     clearCartBtn.addEventListener('click', clearCart);
     checkoutBtn.addEventListener('click', checkout);
-    adminLoginBtn.addEventListener('click', openAdminModal);
+    // Admin panel is now a separate page
     closeAdminModal.addEventListener('click', closeAdminModalFunc);
     closeSuccessModal.addEventListener('click', closeSuccessModalFunc);
     addPetForm.addEventListener('submit', addNewPet);
@@ -252,6 +252,9 @@ function setUsername() {
     updateUsernameDisplay();
     usernameInput.value = '';
     updateCartButtons();
+    
+    // Load Roblox avatar
+    loadRobloxAvatar(username);
 }
 
 function changeUsername() {
@@ -267,6 +270,9 @@ function checkUsername() {
         currentUsername = savedUsername;
         updateUsernameDisplay();
         updateCartButtons();
+        
+        // Load saved avatar
+        loadRobloxAvatar(savedUsername);
     }
 }
 
@@ -277,6 +283,41 @@ function updateUsernameDisplay() {
     } else {
         usernameDisplay.classList.add('hidden');
     }
+}
+
+// Load Roblox avatar
+function loadRobloxAvatar(username) {
+    const avatarImg = document.getElementById('robloxAvatar');
+    const avatarLoading = document.getElementById('avatarLoading');
+    
+    // Show loading state
+    avatarLoading.classList.remove('hidden');
+    avatarImg.style.display = 'none';
+    
+    // Roblox avatar API endpoint
+    const avatarUrl = `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${username}&size=150x150&format=Png&isCircular=true`;
+    
+    fetch(avatarUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.data && data.data[0] && data.data[0].imageUrl) {
+                avatarImg.src = data.data[0].imageUrl;
+                avatarImg.style.display = 'block';
+            } else {
+                // Fallback to placeholder
+                avatarImg.src = `https://via.placeholder.com/60x60?text=${username.charAt(0).toUpperCase()}`;
+                avatarImg.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Roblox avatar:', error);
+            // Fallback to placeholder
+            avatarImg.src = `https://via.placeholder.com/60x60?text=${username.charAt(0).toUpperCase()}`;
+            avatarImg.style.display = 'block';
+        })
+        .finally(() => {
+            avatarLoading.classList.add('hidden');
+        });
 }
 
 // Load and display pets
@@ -442,11 +483,11 @@ function openAdminModal() {
 }
 
 function closeAdminModalFunc() {
-    adminModal.classList.remove('hidden');
+    adminModal.classList.add('hidden');
 }
 
 function closeSuccessModalFunc() {
-    successModal.classList.remove('hidden');
+    successModal.classList.add('hidden');
 }
 
 function addNewPet(event) {

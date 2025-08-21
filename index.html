@@ -17,10 +17,10 @@
                 <h1>Grow a Garden Pets</h1>
             </div>
             <div class="header-actions">
-                <button id="adminLoginBtn" class="admin-btn">
+                <a href="admin.html" class="admin-btn" target="_blank">
                     <i class="fas fa-user-shield"></i>
-                    Admin
-                </button>
+                    Admin Panel
+                </a>
             </div>
         </header>
 
@@ -32,7 +32,17 @@
                 <button id="setUsernameBtn" class="set-username-btn">Set Username</button>
             </div>
             <div id="usernameDisplay" class="username-display hidden">
-                <span>Username: <strong id="currentUsername"></strong></span>
+                <div class="username-info">
+                    <div class="roblox-avatar">
+                        <img id="robloxAvatar" src="" alt="Roblox Avatar" onerror="this.src='https://via.placeholder.com/60x60?text=?'">
+                    </div>
+                    <div class="username-details">
+                        <span>Username: <strong id="currentUsername"></strong></span>
+                        <div class="avatar-loading hidden" id="avatarLoading">
+                            <i class="fas fa-spinner fa-spin"></i> Loading avatar...
+                        </div>
+                    </div>
+                </div>
                 <button id="changeUsernameBtn" class="change-username-btn">Change</button>
             </div>
         </section>

@@ -61,6 +61,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    text-decoration: none;
 }
 
 .admin-btn:hover {
@@ -130,9 +131,48 @@ body {
     gap: 15px;
 }
 
-.username-display span {
+.username-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.roblox-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #4CAF50;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.roblox-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.username-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.username-details span {
     font-size: 1.1rem;
     color: #333;
+}
+
+.avatar-loading {
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.avatar-loading i {
+    color: #4CAF50;
 }
 
 .change-username-btn {

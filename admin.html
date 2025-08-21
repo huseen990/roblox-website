@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Grow a Garden Pets</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <div class="admin-logo">
+                <i class="fas fa-user-shield"></i>
+                <h1>Admin Panel</h1>
+                <span class="admin-subtitle">Grow a Garden Pets Management</span>
+            </div>
+            <div class="admin-stats">
+                <div class="stat-item">
+                    <i class="fas fa-paw"></i>
+                    <span id="totalPets">0</span>
+                    <label>Total Pets</label>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span id="totalValue">0</span>
+                    <label>Total Value</label>
+                </div>
+            </div>
+        </header>
+
+        <!-- Admin Navigation -->
+        <nav class="admin-nav">
+            <button class="nav-btn active" data-section="pets">
+                <i class="fas fa-paw"></i>
+                Manage Pets
+            </button>
+            <button class="nav-btn" data-section="orders">
+                <i class="fas fa-shopping-cart"></i>
+                View Orders
+            </button>
+            <button class="nav-btn" data-section="analytics">
+                <i class="fas fa-chart-bar"></i>
+                Analytics
+            </button>
+            <button class="nav-btn" data-section="settings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </button>
+        </nav>
+
+        <!-- Main Admin Content -->
+        <main class="admin-main">
+            <!-- Pets Management Section -->
+            <section id="pets-section" class="admin-section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-paw"></i> Manage Pets</h2>
+                    <button id="addPetBtn" class="primary-btn">
+                        <i class="fas fa-plus"></i>
+                        Add New Pet
+                    </button>
+                </div>
+
+                <!-- Add Pet Form -->
+                <div id="addPetForm" class="add-pet-form hidden">
+                    <h3>Add New Pet</h3>
+                    <form id="newPetForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="petName">Pet Name *</label>
+                                <input type="text" id="petName" name="petName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="petPrice">Price (Robux) *</label>
+                                <input type="number" id="petPrice" name="petPrice" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="petImage">Image URL *</label>
+                            <input type="url" id="petImage" name="petImage" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petDescription">Description *</label>
+                            <textarea id="petDescription" name="petDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-btn">
+                                <i class="fas fa-save"></i>
+                                Add Pet
+                            </button>
+                            <button type="button" id="cancelAddPet" class="secondary-btn">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Pets Grid -->
+                <div class="pets-grid" id="adminPetsGrid">
+                    <!-- Pets will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders-section" class="admin-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-shopping-cart"></i> Recent Orders</h2>
+                    <button id="refreshOrders" class="secondary-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div class="orders-list" id="ordersList">
+                    <div class="no-data">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>No orders yet</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics-section" class="admin-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar"></i> Store Analytics</h2>
+                </div>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Top Selling Pets</h3>
+                        <div id="topPets" class="analytics-content">
+                            <div class="no-data">No data available</div>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Revenue Overview</h3>
+                        <div id="revenueChart" class="analytics-content">
+                            <div class="no-data">No data available</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" class="admin-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-cog"></i> Store Settings</h2>
+                </div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="storeName">Store Name</label>
+                        <input type="text" id="storeName" value="Grow a Garden Pets">
+                    </div>
+                    <div class="form-group">
+                        <label for="robloxGroupUrl">Roblox Group URL</label>
+                        <input type="url" id="robloxGroupUrl" value="https://www.roblox.com/share/g/58795671">
+                    </div>
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <select id="currency">
+                            <option value="Robux">Robux</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                        </select>
+                    </div>
+                    <button type="button" id="saveSettings" class="primary-btn">
+                        <i class="fas fa-save"></i>
+                        Save Settings
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Pet Modal -->
+    <div id="editPetModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Pet</h3>
+                <button class="close-btn" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editPetForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editPetName">Pet Name</label>
+                            <input type="text" id="editPetName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPetPrice">Price (Robux)</label>
+                            <input type="number" id="editPetPrice" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPetImage">Image URL</label>
+                        <input type="url" id="editPetImage" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPetDescription">Description</label>
+                        <textarea id="editPetDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-btn">Save Changes</button>
+                        <button type="button" class="secondary-btn" id="cancelEdit">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal hidden">
+        <div class="modal-content delete-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirm Delete</h3>
+                <button class="close-btn" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deletePetName"></strong>?</p>
+                <p class="warning">This action cannot be undone!</p>
+                <div class="form-actions">
+                    <button type="button" id="confirmDelete" class="danger-btn">Delete Pet</button>
+                    <button type="button" class="secondary-btn" id="cancelDelete">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
