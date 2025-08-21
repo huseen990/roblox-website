@@ -3,190 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garden Treasures - Roblox Items Store</title>
+    <title>Grow a Garden Pets - Roblox Store</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
                 <i class="fas fa-seedling"></i>
-                <span>Garden Treasures</span>
+                <h1>Grow a Garden Pets</h1>
             </div>
-            <ul class="nav-menu">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#products">Products</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#cart" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span></a></li>
-            </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
+            <div class="header-actions">
+                <button id="adminLoginBtn" class="admin-btn">
+                    <i class="fas fa-user-shield"></i>
+                    Admin
+                </button>
             </div>
-        </div>
-    </nav>
+        </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1>Grow Your Garden with Premium Roblox Items</h1>
-            <p>Discover exclusive items to enhance your "Grow a Garden" experience</p>
-            <a href="#products" class="cta-button">Shop Now</a>
-        </div>
-        <div class="hero-image">
-            <div class="floating-elements">
-                <div class="floating-item">🌱</div>
-                <div class="floating-item">🌸</div>
-                <div class="floating-item">🌿</div>
-                <div class="floating-item">🌻</div>
+        <!-- Username Input Section -->
+        <section class="username-section">
+            <div class="username-container">
+                <i class="fas fa-user"></i>
+                <input type="text" id="usernameInput" placeholder="Enter your Roblox username" maxlength="20">
+                <button id="setUsernameBtn" class="set-username-btn">Set Username</button>
             </div>
-        </div>
-    </section>
-
-    <!-- Products Section -->
-    <section id="products" class="products">
-        <div class="container">
-            <h2>Featured Items</h2>
-            <div class="products-grid" id="products-grid">
-                <!-- Products will be loaded here -->
+            <div id="usernameDisplay" class="username-display hidden">
+                <span>Username: <strong id="currentUsername"></strong></span>
+                <button id="changeUsernameBtn" class="change-username-btn">Change</button>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>About Garden Treasures</h2>
-                    <p>Welcome to the ultimate destination for premium Roblox items! We specialize in providing high-quality items for the "Grow a Garden" map, helping you create the most beautiful and productive garden possible.</p>
-                    <p>Our items are carefully selected to enhance your gaming experience and help you achieve your gardening goals faster and more efficiently.</p>
-                    <div class="features">
-                        <div class="feature">
-                            <i class="fas fa-shield-alt"></i>
-                            <h3>Safe & Secure</h3>
-                            <p>100% legitimate items</p>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-shipping-fast"></i>
-                            <h3>Instant Delivery</h3>
-                            <p>Get your items immediately</p>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-headset"></i>
-                            <h3>24/7 Support</h3>
-                            <p>We're here to help you</p>
-                        </div>
-                    </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Pets Grid -->
+            <section class="pets-section">
+                <h2>Available Pets</h2>
+                <div id="petsGrid" class="pets-grid">
+                    <!-- Pets will be dynamically loaded here -->
                 </div>
-                <div class="about-image">
-                    <div class="garden-preview">
-                        <div class="garden-item">🌺</div>
-                        <div class="garden-item">🌳</div>
-                        <div class="garden-item">🌻</div>
-                        <div class="garden-item">🌿</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2>Get In Touch</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <h3>Email</h3>
-                            <p>contact@gardentreasures.com</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fab fa-discord"></i>
-                        <div>
-                            <h3>Discord</h3>
-                            <p>GardenTreasures#1234</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fab fa-roblox"></i>
-                        <div>
-                            <h3>Roblox</h3>
-                            <p>GardenTreasures</p>
-                        </div>
-                    </div>
+            <!-- Cart Section -->
+            <section class="cart-section">
+                <div class="cart-header">
+                    <h3><i class="fas fa-shopping-cart"></i> Shopping Cart</h3>
+                    <button id="clearCartBtn" class="clear-cart-btn">Clear Cart</button>
                 </div>
-                <form class="contact-form">
-                    <input type="text" placeholder="Your Name" required>
-                    <input type="email" placeholder="Your Email" required>
-                    <textarea placeholder="Your Message" rows="5" required></textarea>
-                    <button type="submit" class="submit-btn">Send Message</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Cart Modal -->
-    <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Shopping Cart</h2>
-                <span class="close">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div id="cart-items">
-                    <!-- Cart items will be displayed here -->
+                <div id="cartItems" class="cart-items">
+                    <p class="empty-cart">Your cart is empty</p>
                 </div>
                 <div class="cart-total">
-                    <h3>Total: $<span id="cart-total">0.00</span></h3>
+                    <span>Total: <strong id="cartTotal">0</strong> Robux</span>
+                    <button id="checkoutBtn" class="checkout-btn" disabled>
+                        <i class="fas fa-credit-card"></i>
+                        Checkout
+                    </button>
                 </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Grow a Garden Pets. All rights reserved.</p>
+            <p>Powered by Roblox</p>
+        </footer>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-shield"></i> Admin Panel</h3>
+                <button id="closeAdminModal" class="close-btn">&times;</button>
             </div>
-            <div class="modal-footer">
-                <button id="checkout-btn" class="checkout-btn">Proceed to Checkout</button>
+            <div class="modal-body">
+                <div class="admin-section">
+                    <h4>Add New Pet</h4>
+                    <form id="addPetForm">
+                        <div class="form-group">
+                            <label for="petName">Pet Name:</label>
+                            <input type="text" id="petName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petPrice">Price (Robux):</label>
+                            <input type="number" id="petPrice" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petImage">Image URL:</label>
+                            <input type="url" id="petImage" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petDescription">Description:</label>
+                            <textarea id="petDescription" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="admin-submit-btn">Add Pet</button>
+                    </form>
+                </div>
+                
+                <div class="admin-section">
+                    <h4>Manage Existing Pets</h4>
+                    <div id="existingPets" class="existing-pets">
+                        <!-- Existing pets will be loaded here -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Garden Treasures</h3>
-                    <p>Your trusted source for premium Roblox items</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#products">Products</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Follow Us</h3>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-discord"></i></a>
-                        <a href="#"><i class="fab fa-roblox"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
+    <!-- Success Modal -->
+    <div id="successModal" class="modal hidden">
+        <div class="modal-content success-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle"></i> Order Placed!</h3>
+                <button id="closeSuccessModal" class="close-btn">&times;</button>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Garden Treasures. All rights reserved.</p>
+            <div class="modal-body">
+                <p>Your order has been placed successfully!</p>
+                <p>You will be teleported to our Roblox group to complete payment.</p>
+                <div class="teleport-info">
+                    <p><strong>Username:</strong> <span id="orderUsername"></span></p>
+                    <p><strong>Total:</strong> <span id="orderTotal"></span> Robux</p>
+                </div>
+                <button id="teleportBtn" class="teleport-btn">
+                    <i class="fas fa-external-link-alt"></i>
+                    Go to Roblox Group
+                </button>
             </div>
         </div>
-    </footer>
+    </div>
 
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
