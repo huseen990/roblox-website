@@ -1,9 +1,34 @@
-// Admin Panel JavaScript
+// Firebase Configuration
+const firebaseConfig = window.firebaseConfig || {
+    // Fallback config - replace with your actual Firebase config
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Admin Panel Variables
 let pets = [];
 let orders = [];
 let currentEditPet = null;
+let isAuthenticated = false;
+
+// Secret Access Code (Change this to your secret code)
+const SECRET_CODE = "growagarden2024";
 
 // DOM Elements
+const secretAccess = document.getElementById('secretAccess');
+const adminHeader = document.getElementById('adminHeader');
+const adminMain = document.getElementById('adminMain');
+const secretCodeInput = document.getElementById('secretCode');
+const accessBtn = document.getElementById('accessBtn');
+const logoutBtn = document.getElementById('logoutBtn');
 const totalPetsSpan = document.getElementById('totalPets');
 const totalValueSpan = document.getElementById('totalValue');
 const navBtns = document.querySelectorAll('.nav-btn');
@@ -28,15 +53,21 @@ const saveSettingsBtn = document.getElementById('saveSettings');
 
 // Initialize Admin Panel
 document.addEventListener('DOMContentLoaded', function() {
-    loadPetsFromStorage();
-    loadOrdersFromStorage();
     setupEventListeners();
-    updateStats();
-    loadAdminPets();
+    checkAuthentication();
 });
 
 // Setup Event Listeners
 function setupEventListeners() {
+    // Secret Access
+    accessBtn.addEventListener('click', checkSecretCode);
+    secretCodeInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') checkSecretCode();
+    });
+    
+    // Logout
+    logoutBtn.addEventListener('click', logout);
+    
     // Navigation
     navBtns.forEach(btn => {
         btn.addEventListener('click', () => switchSection(btn.dataset.section));
@@ -72,6 +103,61 @@ function setupEventListeners() {
             closeDeleteModalFunc();
         }
     });
+}
+
+// Authentication Functions
+function checkSecretCode() {
+    const enteredCode = secretCodeInput.value.trim();
+    
+    if (enteredCode === SECRET_CODE) {
+        authenticate();
+    } else {
+        showNotification('Invalid secret code!', 'error');
+        secretCodeInput.value = '';
+        secretCodeInput.focus();
+    }
+}
+
+function authenticate() {
+    isAuthenticated = true;
+    localStorage.setItem('adminAuthenticated', 'true');
+    
+    // Hide secret access, show admin panel
+    secretAccess.classList.add('hidden');
+    adminHeader.classList.remove('hidden');
+    adminMain.classList.remove('hidden');
+    
+    // Load data
+    loadPetsFromFirebase();
+    loadOrdersFromFirebase();
+    updateStats();
+    loadAdminPets();
+    
+    showNotification('Access granted! Welcome to Admin Panel.', 'success');
+}
+
+function logout() {
+    isAuthenticated = false;
+    localStorage.removeItem('adminAuthenticated');
+    
+    // Hide admin panel, show secret access
+    adminHeader.classList.add('hidden');
+    adminMain.classList.add('hidden');
+    secretAccess.classList.remove('hidden');
+    
+    // Clear data
+    pets = [];
+    orders = [];
+    secretCodeInput.value = '';
+    
+    showNotification('Logged out successfully.', 'info');
+}
+
+function checkAuthentication() {
+    const savedAuth = localStorage.getItem('adminAuthenticated');
+    if (savedAuth === 'true') {
+        authenticate();
+    }
 }
 
 // Navigation Functions
@@ -132,20 +218,16 @@ function handleAddPet(event) {
     }
     
     const newPet = {
-        id: Date.now(),
+        id: Date.now().toString(),
         name: petName,
         price: petPrice,
         image: petImage,
-        description: petDescription
+        description: petDescription,
+        createdAt: new Date().toISOString()
     };
     
-    pets.push(newPet);
-    savePetsToStorage();
-    loadAdminPets();
-    updateStats();
-    toggleAddPetForm();
-    
-    showNotification('New pet added successfully!', 'success');
+    // Save to Firebase
+    savePetToFirebase(newPet);
 }
 
 // Edit Pet Functions
@@ -182,17 +264,16 @@ function handleEditPet(event) {
     }
     
     // Update pet
-    currentEditPet.name = petName;
-    currentEditPet.price = petPrice;
-    currentEditPet.image = petImage;
-    currentEditPet.description = petDescription;
+    const updatedPet = {
+        ...currentEditPet,
+        name: petName,
+        price: petPrice,
+        image: petImage,
+        description: petDescription,
+        updatedAt: new Date().toISOString()
+    };
     
-    savePetsToStorage();
-    loadAdminPets();
-    updateStats();
-    closeEditModalFunc();
-    
-    showNotification('Pet updated successfully!', 'success');
+    updatePetInFirebase(updatedPet);
 }
 
 // Delete Pet Functions
@@ -210,15 +291,7 @@ function closeDeleteModalFunc() {
 function handleDeletePet() {
     if (!currentEditPet) return;
     
-    const petId = currentEditPet.id;
-    pets = pets.filter(pet => pet.id !== petId);
-    
-    savePetsToStorage();
-    loadAdminPets();
-    updateStats();
-    closeDeleteModalFunc();
-    
-    showNotification('Pet deleted successfully!', 'success');
+    deletePetFromFirebase(currentEditPet.id);
 }
 
 // Load Admin Pets
@@ -305,7 +378,7 @@ function createOrderItem(order) {
 }
 
 function refreshOrders() {
-    loadOrders();
+    loadOrdersFromFirebase();
     showNotification('Orders refreshed!', 'info');
 }
 
@@ -380,14 +453,17 @@ function saveSettings() {
     const robloxGroupUrl = document.getElementById('robloxGroupUrl').value;
     const currency = document.getElementById('currency').value;
     
-    // Save to localStorage
-    localStorage.setItem('storeSettings', JSON.stringify({
+    // Save to Firebase
+    db.collection('settings').doc('store').set({
         storeName,
         robloxGroupUrl,
-        currency
-    }));
-    
-    showNotification('Settings saved successfully!', 'success');
+        currency,
+        updatedAt: new Date().toISOString()
+    }).then(() => {
+        showNotification('Settings saved successfully!', 'success');
+    }).catch(error => {
+        showNotification('Error saving settings: ' + error.message, 'error');
+    });
 }
 
 // Utility Functions
@@ -397,6 +473,76 @@ function updateStats() {
     totalValueSpan.textContent = totalValue;
 }
 
+// Firebase Functions
+function loadPetsFromFirebase() {
+    db.collection('pets').orderBy('createdAt', 'desc').get()
+        .then((querySnapshot) => {
+            pets = [];
+            querySnapshot.forEach((doc) => {
+                pets.push({ id: doc.id, ...doc.data() });
+            });
+            loadAdminPets();
+            updateStats();
+        })
+        .catch((error) => {
+            console.error("Error loading pets: ", error);
+            showNotification('Error loading pets from database', 'error');
+        });
+}
+
+function savePetToFirebase(pet) {
+    db.collection('pets').add(pet)
+        .then(() => {
+            showNotification('New pet added successfully!', 'success');
+            toggleAddPetForm();
+            loadPetsFromFirebase();
+        })
+        .catch((error) => {
+            showNotification('Error adding pet: ' + error.message, 'error');
+        });
+}
+
+function updatePetInFirebase(pet) {
+    const { id, ...petData } = pet;
+    db.collection('pets').doc(id).update(petData)
+        .then(() => {
+            showNotification('Pet updated successfully!', 'success');
+            closeEditModalFunc();
+            loadPetsFromFirebase();
+        })
+        .catch((error) => {
+            showNotification('Error updating pet: ' + error.message, 'error');
+        });
+}
+
+function deletePetFromFirebase(petId) {
+    db.collection('pets').doc(petId).delete()
+        .then(() => {
+            showNotification('Pet deleted successfully!', 'success');
+            closeDeleteModalFunc();
+            loadPetsFromFirebase();
+        })
+        .catch((error) => {
+            showNotification('Error deleting pet: ' + error.message, 'error');
+        });
+}
+
+function loadOrdersFromFirebase() {
+    db.collection('orders').orderBy('createdAt', 'desc').limit(50).get()
+        .then((querySnapshot) => {
+            orders = [];
+            querySnapshot.forEach((doc) => {
+                orders.push({ id: doc.id, ...doc.data() });
+            });
+            loadOrders();
+        })
+        .catch((error) => {
+            console.error("Error loading orders: ", error);
+            showNotification('Error loading orders from database', 'error');
+        });
+}
+
+// Notification System
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -457,62 +603,4 @@ function showNotification(message, type = 'info') {
             }
         }, 300);
     }, 3000);
-}
-
-// Storage Functions
-function loadPetsFromStorage() {
-    const savedPets = localStorage.getItem('pets');
-    if (savedPets) {
-        pets = JSON.parse(savedPets);
-    } else {
-        // Load default pets if none exist
-        pets = [
-            {
-                id: 1,
-                name: 'Blood Kiwi',
-                price: 150,
-                image: 'Blood_Kiwi_Icon.webp',
-                description: 'A rare and mysterious blood kiwi pet with unique abilities.'
-            },
-            {
-                id: 2,
-                name: 'Blood Owl',
-                price: 200,
-                image: 'Blood_Owl_Icon.webp',
-                description: 'A majestic blood owl that soars through the night sky.'
-            }
-            // Add more default pets as needed
-        ];
-        savePetsToStorage();
-    }
-}
-
-function savePetsToStorage() {
-    localStorage.setItem('pets', JSON.stringify(pets));
-}
-
-function loadOrdersFromStorage() {
-    const savedOrders = localStorage.getItem('orders');
-    if (savedOrders) {
-        orders = JSON.parse(savedOrders);
-    }
-}
-
-// Add some sample orders for demonstration
-function addSampleOrder() {
-    const sampleOrder = {
-        id: Date.now(),
-        username: 'SampleUser',
-        items: ['Blood Kiwi', 'Blood Owl'],
-        total: 350,
-        date: new Date().toISOString()
-    };
-    
-    orders.push(sampleOrder);
-    localStorage.setItem('orders', JSON.stringify(orders));
-}
-
-// Initialize with sample data if no orders exist
-if (orders.length === 0) {
-    addSampleOrder();
 }
